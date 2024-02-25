@@ -20,14 +20,7 @@ class Snippet(models.Model):
     owner = models.ForeignKey('auth.User', related_name='snippets', on_delete=models.CASCADE)
     highlighted = models.TextField()
 
-    class Meta:
-        ordering = ['created']
-
     def save(self, *args, **kwargs):
-    """
-    Use the `pygments` library to create a highlighted HTML
-    representation of the code snippet.
-    """
         lexer = get_lexer_by_name(self.language)
         linenos = 'table' if self.linenos else False
         options = {'title': self.title} if self.title else {}
@@ -35,3 +28,7 @@ class Snippet(models.Model):
                                 full=True, **options)
         self.highlighted = highlight(self.code, lexer, formatter)
         super().save(*args, **kwargs)
+
+
+    class Meta:
+        ordering = ['created']
